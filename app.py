@@ -38,3 +38,21 @@ def create_device(device: Device):
     devices.insert_one(new_device)
     new_device.pop("_id")  
     return new_device
+
+@app.put("/devices/{name}")
+def update_device(name: str, device: Device):
+    existing_device = devices.find_one({"name": name})
+
+    if existing_device is None:
+        raise HTTPException(status_code=404, detail="Device not found")
+
+    updated_device = device.model_dump()
+
+    updated_device["name"] = name
+
+    devices.replace_one(
+        {"name": name},
+        updated_device
+    )
+
+    return updated_device
