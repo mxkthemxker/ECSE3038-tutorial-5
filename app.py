@@ -56,3 +56,12 @@ def update_device(name: str, device: Device):
     )
 
     return updated_device
+
+@app.delete("/devices/{name}")
+def delete_device(name: str):
+    result = devices.delete_one({"name": name})
+
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Device not found")
+
+    return {"message": "Device deleted"}
